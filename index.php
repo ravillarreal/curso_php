@@ -1,17 +1,10 @@
 <?php
+
+require('jobs.php');
+
 $name = 'Rafael Villarreal';
-$jobs = [
-  [
-    'title' => 'PHP Developer',
-    'description' => 'Supermegahiperawesome PHP Job!!'
-  ],
-  [
-    'title' => 'Python Developer',
-  ],
-  [
-    'title' => 'DevOps'
-  ],
-];
+$limitMonths = 2000;
+
 ?>
 
 <!doctype html>
@@ -63,18 +56,15 @@ $jobs = [
           <ul>
             
             <?php 
-
+            $totalMonths = 0;
             foreach($jobs as $job) {
-              echo '<li class="work-position">';
-              echo '<h5>' . $job['title'] . '</h5>';
-              echo '<p>' . $job['description'] . '</p>';
-              echo '<strong>Achievements:</strong>';
-              echo '<ul>';
-              echo '<li>Lorem ipsum dolor sit amet, 80% consectetuer adipiscing elit.</li>';
-              echo '<li>Lorem ipsum dolor sit amet, 80% consectetuer adipiscing elit.</li>';
-              echo '<li>Lorem ipsum dolor sit amet, 80% consectetuer adipiscing elit.</li>';
-              echo '</ul>';
-              echo '</li>';
+
+              $totalMonths += $job->months;
+              if ($totalMonths > $limitMonths) {
+                break;
+              }
+
+              printJob($job);
             }
               
             ?>
