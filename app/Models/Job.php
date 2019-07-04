@@ -1,8 +1,10 @@
 <?php
 
+namespace App\Models;
+
 require_once 'BaseElement.php';
 
-class Job extends BaseElement {
+class Job extends BaseElement{
 
     public function __construct($title, $description) {
         $newTitle = 'Job: ' . $title;
