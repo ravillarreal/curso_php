@@ -1,13 +1,15 @@
 <?php
 
 ini_set('display_errors', 1);
-ini_set('display_startup_errors', 1);   
+ini_set('display_startup_errors', 1);
 error_reporting(E_ALL);
 
 require_once '../vendor/autoload.php';
 
 use Illuminate\Database\Capsule\Manager as Capsule;
 use App\Models\Job;
+use Aura\Router\RouterContainer;
+
 
 $capsule = new Capsule;
 
@@ -36,6 +38,25 @@ $request = Zend\Diactoros\ServerRequestFactory::fromGlobals(
     $_FILES
 );
 
-$route = $_GET['route'] ?? '/';
+$routerContainer = new RouterContainer();
+$map = $routerContainer->getMap();
 
-var_dump($request->getUri()->getPath());
+$map->get('index', '/curso/', [
+    'controller' => 'App\Controllers\IndexController',
+    'action' => 'indexAction'
+]);
+$map->get('addJobs', '/curso/jobs/add', '../addJob.php');
+
+$matcher = $routerContainer->getMatcher();
+$route = $matcher->match($request);
+
+if (!$route) {
+    echo 'No existe ese camino pana...';
+} else {
+    $handlerData = $route->handler;
+    $controllerName = $handlerData['controller'];
+    $actionName = $handlerData['action'];
+
+    $controller = new $controllerName;
+    $controller->$actionName();
+}
