@@ -45,7 +45,11 @@ $map->get('index', '/curso/', [
     'controller' => 'App\Controllers\IndexController',
     'action' => 'indexAction'
 ]);
-$map->get('addJobs', '/curso/jobs/add', '../addJob.php');
+
+$map->get('addJobs', '/curso/jobs/add', [
+    'controller' => 'App\Controllers\JobsController',
+    'action' => 'getAddJobAction'
+]);
 
 $matcher = $routerContainer->getMatcher();
 $route = $matcher->match($request);
@@ -60,3 +64,21 @@ if (!$route) {
     $controller = new $controllerName;
     $controller->$actionName();
 }
+
+function printElement($job) {
+    // if($job->visible == false) {
+    //   return;
+    // }
+    
+    echo '<li class="work-position">';
+    echo '<h5>' . $job->title . '</h5>';
+    echo '<p>' . $job->description . '</p>';
+    echo '<p>' . $job->getDurationAsString() . '</p>';
+    echo '<strong>Achievements:</strong>';
+    echo '<ul>';
+    echo '<li>Lorem ipsum dolor sit amet, 80% consectetuer adipiscing elit.</li>';
+    echo '<li>Lorem ipsum dolor sit amet, 80% consectetuer adipiscing elit.</li>';
+    echo '<li>Lorem ipsum dolor sit amet, 80% consectetuer adipiscing elit.</li>';
+    echo '</ul>';
+    echo '</li>';
+  }

@@ -1,12 +1,3 @@
-<?php
-
-require_once('jobs.php');
-
-$name = 'Rafael Villarreal';
-$limitMonths = 2000;
-
-?>
-
 <!doctype html>
 <html lang="en">
 
