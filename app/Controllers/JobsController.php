@@ -3,18 +3,43 @@
 namespace App\Controllers;
 
 use App\Models\Job;
+use Respect\Validation\Validator as v;
 
 class JobsController extends BaseController {
     public function getAddJobAction($request) {
 
+        $responseMessage = null;
+
         if ($request->getMethod() == 'POST') {
+
             $postData = $request->getParsedBody();
-            $job = new Job();
-            $job->title = $postData['title'];
-            $job->description = $postData['description'];
-            $job->save();
+            $jobValidator = v::key('title', v::stringType()->notEmpty())
+            ->key('description', v::stringType()->notEmpty());
+            
+            try {
+                $jobValidator->assert($postData);
+                $files = $request->getUploadedFiles();
+                $logo = $files['logo'];
+
+                if ($logo->getError() == UPLOAD_ERR_OK) {
+                    $fileName = $logo->getClientFilename();
+                    $logo->moveTo("uploads/$fileName");
+                    $img = "uploads/$fileName";
+                }
+                $job = new Job();
+                $job->title = $postData['title'];
+                $job->description = $postData['description'];
+                $job->img = $img;
+                $job->save();
+                $responseMessage = 'Saved';
+            } catch (\Exception $e) {
+                $responseMessage = $e->getMessage();
+            }
+            
         }
 
-        echo $this->renderHTML('addJob.twig');
+        return $this->renderHTML('addJob.twig', [
+            'responseMessage' => $responseMessage
+        ]);
     }
 }
