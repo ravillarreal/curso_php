@@ -6,13 +6,17 @@ use App\Models\Job;
 use Respect\Validation\Validator as v;
 
 class JobsController extends BaseController {
-    public function getAddJobAction($request) {
+    public function getAddJob($request) {
 
         $responseMessage = null;
 
-        if ($request->getMethod() == 'POST') {
+        return $this->renderHTML('addJob.twig', [
+            'responseMessage' => $responseMessage
+        ]);
+    }
 
-            $postData = $request->getParsedBody();
+    public function postSaveJob($request) {
+        $postData = $request->getParsedBody();
             $jobValidator = v::key('title', v::stringType()->notEmpty())
             ->key('description', v::stringType()->notEmpty());
             
@@ -35,11 +39,9 @@ class JobsController extends BaseController {
             } catch (\Exception $e) {
                 $responseMessage = $e->getMessage();
             }
-            
-        }
 
-        return $this->renderHTML('addJob.twig', [
-            'responseMessage' => $responseMessage
-        ]);
+            return $this->renderHTML('addJob.twig', [
+                'responseMessage' => $responseMessage
+            ]);
     }
 }

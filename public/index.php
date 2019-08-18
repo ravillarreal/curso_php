@@ -48,12 +48,32 @@ $map->get('index', '/curso/', [
 
 $map->get('addJobs', '/curso/jobs/add', [
     'controller' => 'App\Controllers\JobsController',
-    'action' => 'getAddJobAction'
+    'action' => 'getAddJob'
 ]);
 
 $map->post('saveJobs', '/curso/jobs/add', [
     'controller' => 'App\Controllers\JobsController',
-    'action' => 'getAddJobAction'
+    'action' => 'postSaveJob'
+]);
+
+$map->get('addUsers', '/curso/users/add', [
+    'controller' => 'App\Controllers\UsersController',
+    'action' => 'getAddUser'
+]);
+
+$map->post('saveUsers', '/curso/users/add', [
+    'controller' => 'App\Controllers\UsersController',
+    'action' => 'postSaveUser'
+]);
+
+$map->get('login', '/curso/login', [
+    'controller' => 'App\Controllers\AuthController',
+    'action' => 'getLogin'
+]);
+
+$map->post('auth', '/curso/auth', [
+    'controller' => 'App\Controllers\AuthController',
+    'action' => 'postLogin'
 ]);
 
 $matcher = $routerContainer->getMatcher();
@@ -69,23 +89,12 @@ if (!$route) {
     $controller = new $controllerName;
     $response = $controller->$actionName($request);
 
+    foreach ($response->getHeaders() as $name => $values) {
+        foreach($values as $value) {
+            header(sprintf('%s: %s', $name, $value), false);
+        }
+    }
+
+    http_response_code($response->getStatusCode());   
     echo $response->getBody();
 }
-
-function printElement($job) {
-    // if($job->visible == false) {
-    //   return;
-    // }
-    
-    echo '<li class="work-position">';
-    echo '<h5>' . $job->title . '</h5>';
-    echo '<p>' . $job->description . '</p>';
-    echo '<p>' . $job->getDurationAsString() . '</p>';
-    echo '<strong>Achievements:</strong>';
-    echo '<ul>';
-    echo '<li>Lorem ipsum dolor sit amet, 80% consectetuer adipiscing elit.</li>';
-    echo '<li>Lorem ipsum dolor sit amet, 80% consectetuer adipiscing elit.</li>';
-    echo '<li>Lorem ipsum dolor sit amet, 80% consectetuer adipiscing elit.</li>';
-    echo '</ul>';
-    echo '</li>';
-  }
