@@ -45,51 +45,51 @@ $request = Zend\Diactoros\ServerRequestFactory::fromGlobals(
 $routerContainer = new RouterContainer();
 $map = $routerContainer->getMap();
 
-$map->get('index', '/curso/', [
+$map->get('index', '/', [
     'controller' => 'App\Controllers\IndexController',
     'action' => 'indexAction'
 ]);
 
-$map->get('addJobs', '/curso/jobs/add', [
+$map->get('addJobs', '/jobs/add', [
     'controller' => 'App\Controllers\JobsController',
     'action' => 'getAddJob',
     'auth' => true,
 ]);
 
-$map->post('saveJobs', '/curso/jobs/add', [
+$map->post('saveJobs', '/jobs/add', [
     'controller' => 'App\Controllers\JobsController',
     'action' => 'postSaveJob',
     'auth' => true,
 ]);
 
-$map->get('addUsers', '/curso/users/add', [
+$map->get('addUsers', '/users/add', [
     'controller' => 'App\Controllers\UsersController',
     'action' => 'getAddUser',
     'auth' => true,
 ]);
 
-$map->post('saveUsers', '/curso/users/add', [
+$map->post('saveUsers', '/users/add', [
     'controller' => 'App\Controllers\UsersController',
     'action' => 'postSaveUser',
     'auth' => true,
 ]);
 
-$map->get('login', '/curso/login', [
+$map->get('login', '/login', [
     'controller' => 'App\Controllers\AuthController',
     'action' => 'getLogin'
 ]);
 
-$map->get('logout', '/curso/logout', [
+$map->get('logout', '/logout', [
     'controller' => 'App\Controllers\AuthController',
     'action' => 'getLogout'
 ]);
 
-$map->post('auth', '/curso/auth', [
+$map->post('auth', '/auth', [
     'controller' => 'App\Controllers\AuthController',
     'action' => 'postLogin'
 ]);
 
-$map->get('admin', '/curso/admin', [
+$map->get('admin', '/admin', [
     'controller' => 'App\Controllers\AdminController',
     'action' => 'getIndex',
     'auth' => true,
@@ -108,7 +108,7 @@ if (!$route) {
     $sessionUserId = $_SESSION['userId'] ?? null;
 
     if ($needsAuth && !$sessionUserId) {
-        $response = new RedirectResponse('/curso/login');
+        $response = new RedirectResponse('/login');
     } else {
         $controller = new $controllerName;
         $response = $controller->$actionName($request);

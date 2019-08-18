@@ -21,7 +21,7 @@ class AuthController extends BaseController {
         if($user) {
             if (\password_verify($postData['password'], $user->password)) {
                 $_SESSION['userId'] = $user->id;
-                return new RedirectResponse('/curso/admin');
+                return new RedirectResponse('/admin');
             } else {
                 $responseMessage = 'Tu ere marico?';
             }
@@ -37,6 +37,6 @@ class AuthController extends BaseController {
     public function getLogout($request) {
 
         unset($_SESSION['userId']);
-        return new RedirectResponse('/curso/login');
+        return new RedirectResponse('/login');
     }
 }
