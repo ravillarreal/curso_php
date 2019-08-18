@@ -7,18 +7,22 @@ error_reporting(E_ALL);
 require_once '../vendor/autoload.php';
 
 use Illuminate\Database\Capsule\Manager as Capsule;
-use App\Models\Job;
 use Aura\Router\RouterContainer;
+use Zend\Diactoros\Response\RedirectResponse;
 
+session_start();
+
+$dotenv = Dotenv\Dotenv::create(__DIR__ . '/..');
+$dotenv->load();
 
 $capsule = new Capsule;
 
 $capsule->addConnection([
     'driver'    => 'mysql',
-    'host'      => 'localhost',
-    'database'  => 'cursophp',
-    'username'  => 'root',
-    'password'  => '',
+    'host'      => getenv('DB_HOST'),
+    'database'  => getenv('DB_NAME'),
+    'username'  => getenv('DB_USER'),
+    'password'  => getenv('DB_PASSWORD'),
     'charset'   => 'utf8',
     'collation' => 'utf8_unicode_ci',
     'prefix'    => '',
@@ -48,22 +52,26 @@ $map->get('index', '/curso/', [
 
 $map->get('addJobs', '/curso/jobs/add', [
     'controller' => 'App\Controllers\JobsController',
-    'action' => 'getAddJob'
+    'action' => 'getAddJob',
+    'auth' => true,
 ]);
 
 $map->post('saveJobs', '/curso/jobs/add', [
     'controller' => 'App\Controllers\JobsController',
-    'action' => 'postSaveJob'
+    'action' => 'postSaveJob',
+    'auth' => true,
 ]);
 
 $map->get('addUsers', '/curso/users/add', [
     'controller' => 'App\Controllers\UsersController',
-    'action' => 'getAddUser'
+    'action' => 'getAddUser',
+    'auth' => true,
 ]);
 
 $map->post('saveUsers', '/curso/users/add', [
     'controller' => 'App\Controllers\UsersController',
-    'action' => 'postSaveUser'
+    'action' => 'postSaveUser',
+    'auth' => true,
 ]);
 
 $map->get('login', '/curso/login', [
@@ -71,9 +79,20 @@ $map->get('login', '/curso/login', [
     'action' => 'getLogin'
 ]);
 
+$map->get('logout', '/curso/logout', [
+    'controller' => 'App\Controllers\AuthController',
+    'action' => 'getLogout'
+]);
+
 $map->post('auth', '/curso/auth', [
     'controller' => 'App\Controllers\AuthController',
     'action' => 'postLogin'
+]);
+
+$map->get('admin', '/curso/admin', [
+    'controller' => 'App\Controllers\AdminController',
+    'action' => 'getIndex',
+    'auth' => true,
 ]);
 
 $matcher = $routerContainer->getMatcher();
@@ -85,9 +104,15 @@ if (!$route) {
     $handlerData = $route->handler;
     $controllerName = $handlerData['controller'];
     $actionName = $handlerData['action'];
+    $needsAuth = $handlerData['auth'] ?? false;
+    $sessionUserId = $_SESSION['userId'] ?? null;
 
-    $controller = new $controllerName;
-    $response = $controller->$actionName($request);
+    if ($needsAuth && !$sessionUserId) {
+        $response = new RedirectResponse('/curso/login');
+    } else {
+        $controller = new $controllerName;
+        $response = $controller->$actionName($request);
+    }
 
     foreach ($response->getHeaders() as $name => $values) {
         foreach($values as $value) {
