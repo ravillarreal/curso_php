@@ -18,7 +18,7 @@ $dotenv->load();
 $capsule = new Capsule;
 
 $capsule->addConnection([
-    'driver'    => 'mysql',
+    'driver'    => getenv('DB_DRIVER'),
     'host'      => getenv('DB_HOST'),
     'database'  => getenv('DB_NAME'),
     'username'  => getenv('DB_USER'),
